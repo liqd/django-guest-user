@@ -19,6 +19,21 @@ class AppSettings:
 
         return getattr(settings, self.prefix + name, default)
 
+
+    @property
+    def PASSWORD_GENERATOR(self) -> str:
+        """
+        Import path to the name generator function for temporary guest usernames.
+
+        Included with the package are three generators:
+
+        - ``guest_user.functions.generate_plaintext_pswd``
+
+            Generates a UUID4 as a password. Not intended to be shown to the visitor.
+
+        """
+        return self.get("PASSWORD_GENERATOR", "guest_user.functions.generate_plaintext_pswd")
+
     @property
     def NAME_GENERATOR(self) -> str:
         """
@@ -47,7 +62,7 @@ class AppSettings:
         be tried until a unique username has been found.
 
         """
-        return self.get("NAME_GENERATOR", "guest_user.functions.generate_uuid_username")
+        return self.get("NAME_GENERATOR", "guest_user.functions.generate_numbered_username")
 
     @property
     def NAME_PREFIX(self) -> str:

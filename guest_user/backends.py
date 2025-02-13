@@ -8,10 +8,10 @@ class GuestBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         """Authenticate with username only."""
 
-        if password is not None:
-            # Prevent authentication when a password was supplied and
-            # all previous authentication backends have failed.
-            return None
+#        if password is not None:
+#            # Prevent authentication when a password was supplied and
+#            # all previous authentication backends have failed.
+#            return None
 
         UserModel = get_user_model()
 

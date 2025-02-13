@@ -1,4 +1,6 @@
 import random
+import string
+import secrets
 import uuid
 from urllib.parse import urlparse
 
@@ -31,7 +33,8 @@ def maybe_create_guest_user(request):
             user = authenticate(
                 request=request,
                 username=getattr(user, UserModel.USERNAME_FIELD),
-            )
+                password=getattr(user, UserModel.PASSWORD_FIELD),
+                )
             assert user, (
                 "Guest authentication failed. Do you have "
                 "'guest_user.backends.GuestBackend' in AUTHENTICATION_BACKENDS?"
@@ -96,6 +99,13 @@ def generate_friendly_username() -> str:
     from random_username.generate import generate_username
 
     return generate_username()[0]
+
+def generate_plaintext_pswd() -> str:
+    """Generate a random password with eight alphanumeric values."""
+    alphabet = string.ascii_letters + string.digits
+    password = ''.join(secrets.choice(alphabet) for i in range(8))
+
+    return password
 
 
 def redirect_with_next(request, redirect_url, redirect_field_name):

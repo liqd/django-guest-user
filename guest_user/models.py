@@ -30,6 +30,10 @@ class GuestManager(models.Manager.from_queryset(GuestQuerySet)):
     """
 
     @property
+    def generate_password(self):
+        return import_string(settings.PASSWORD_GENERATOR)
+
+    @property
     def generate_username(self):
         return import_string(settings.NAME_GENERATOR)
 
@@ -45,12 +49,14 @@ class GuestManager(models.Manager.from_queryset(GuestQuerySet)):
         """
         if username is None:
             username = self.generate_username()
+            email = f"guest+{username}@liqd.net"
+            password = self.generate_password()
 
         user = None
         while user is None:
             try:
                 with transaction.atomic():
-                    user = UserModel.objects.create_user(username, "")
+                    user = UserModel.objects.create_user(username, email, password)
             except IntegrityError:
                 # retry with a new username
                 username = self.generate_username()
