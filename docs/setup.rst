@@ -28,9 +28,9 @@ and :ref:`django:ref/settings:``authentication_backends```::
 
    AUTHENTICATION_BACKENDS = [
       "django.contrib.auth.backends.ModelBackend",
-      # it should be the last entry to prevent unauthorized access
-      "guest_user.backends.GuestBackend",
    ]
+
+   Do **not** register ``guest_user.backends.GuestBackend`` — see ``CHANGELOG.md``.
 
 Allow guests to convert to registered users by adding the URLs to your :doc:`URLconf<django:topics/http/urls>`::
 

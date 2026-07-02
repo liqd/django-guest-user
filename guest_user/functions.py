@@ -5,7 +5,7 @@ import uuid
 from urllib.parse import urlparse
 
 from django.apps import apps as django_apps
-from django.contrib.auth import authenticate, get_user_model, login
+from django.contrib.auth import get_user_model, login
 from django.core.exceptions import ImproperlyConfigured
 from django.shortcuts import resolve_url
 
@@ -16,8 +16,13 @@ def maybe_create_guest_user(request):
     """
     Create a guest user and log them in.
 
-    This function will create and authenticate a new guest user should the visitor
-    not be authenticated already and their user agent isn't on the block list.
+    This function will create a new guest user should the visitor not be
+    authenticated already and their user agent isn't on the block list.
+
+    The guest is logged in with ``GUEST_USER_LOGIN_BACKEND`` (``ModelBackend``
+    by default). ``guest_user.backends.GuestBackend`` must **not** be registered
+    in ``AUTHENTICATION_BACKENDS`` — guests cannot re-authenticate via the login
+    form.
 
     """
     assert hasattr(
@@ -27,19 +32,9 @@ def maybe_create_guest_user(request):
     if settings.ENABLED and request.user.is_anonymous:
         user_agent = request.META.get("HTTP_USER_AGENT", "")
         if not settings.BLOCKED_USER_AGENTS.search(user_agent):
-            UserModel = get_user_model()
             Guest = get_guest_model()
             user = Guest.objects.create_guest_user(request)
-            user = authenticate(
-                request=request,
-                username=getattr(user, UserModel.USERNAME_FIELD),
-                password=getattr(user, UserModel.PASSWORD_FIELD),
-                )
-            assert user, (
-                "Guest authentication failed. Do you have "
-                "'guest_user.backends.GuestBackend' in AUTHENTICATION_BACKENDS?"
-            )
-            login(request, user)
+            login(request, user, backend=settings.LOGIN_BACKEND)
 
 
 def get_guest_model():
