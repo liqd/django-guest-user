@@ -236,3 +236,18 @@ class AppSettings:
 
         """
         return self.get("MODEL", "guest_user.Guest")
+
+    @property
+    def LOGIN_BACKEND(self) -> str:
+        """
+        Auth backend used when logging a guest in after creation.
+
+        Use a password-checking backend (typically ``ModelBackend``). Do **not**
+        use ``guest_user.backends.GuestBackend`` here.
+
+        :default: ``"django.contrib.auth.backends.ModelBackend"``
+
+        """
+        return self.get(
+            "LOGIN_BACKEND", "django.contrib.auth.backends.ModelBackend"
+        )

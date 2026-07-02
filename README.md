@@ -22,10 +22,11 @@ on Read the Docs.
 ## Quickstart
 
 1. Install the `django-guest-user` package from PyPI
-2. Add `guest_user` to your `INSTALLED_APPS` and migrate your database
-3. Add `guest_user.backends.GuestBackend` to your `AUTHENTICATION_BACKENDS`
-4. Include `guest_user.urls` in your URLs
-5. Decorate your views with `@allow_guest_user`:
+2. Add `guest_user` to your `INSTALLED_APPS` and migrate your database. Do **not**
+   add `guest_user.backends.GuestBackend` to `AUTHENTICATION_BACKENDS` (see
+   `CHANGELOG.md`).
+3. Include `guest_user.urls` in your URLs
+4. Decorate your views with `@allow_guest_user`:
 
    ```python
    from guest_user.decorators import allow_guest_user

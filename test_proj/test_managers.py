@@ -72,3 +72,32 @@ def test_convert_sends_signal():
 
     assert not is_guest_user(converted_user)
     assert guest_user.id == converted_user.id
+
+
+@pytest.mark.django_db
+def test_create_guest_user_with_explicit_username():
+    GuestModel = get_guest_model()
+    guest = GuestModel.objects.create_guest_user(username="customguest")
+
+    assert guest.username == "customguest"
+    assert guest.email == "guest+customguest@liqd.net"
+    assert guest.password
+
+
+@pytest.mark.django_db
+def test_create_guest_user_retries_on_username_collision(monkeypatch):
+    GuestModel = get_guest_model()
+    usernames = iter(["taken", "free"])
+
+    def fake_username():
+        return next(usernames)
+
+    monkeypatch.setattr(GuestModel, "generate_username", fake_username)
+
+    UserModel = get_user_model()
+    UserModel.objects.create_user("taken", "taken@example.com", "password")
+
+    guest = GuestModel.objects.create_guest_user()
+
+    assert guest.username == "free"
+    assert guest.email == "guest+free@liqd.net"

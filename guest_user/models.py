@@ -47,19 +47,17 @@ class GuestManager(models.Manager.from_queryset(GuestQuerySet)):
         :param username: The preferred username for the user, may be None.
 
         """
-        if username is None:
-            username = self.generate_username()
-            email = f"guest+{username}@liqd.net"
-            password = self.generate_password()
-
         user = None
         while user is None:
+            if username is None:
+                username = self.generate_username()
+            email = f"guest+{username}@liqd.net"
+            password = self.generate_password()
             try:
                 with transaction.atomic():
                     user = UserModel.objects.create_user(username, email, password)
             except IntegrityError:
-                # retry with a new username
-                username = self.generate_username()
+                username = None
 
         self.create(user=user)
         if request is not None:

@@ -110,7 +110,6 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    "guest_user.backends.GuestBackend",
 ]
 
 # Internationalization
